@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+*.env
+
+# Build & Vite caches
+dist/
+build/
+.vite/
+*.log
+
+# Uploaded media (keep folder, exclude uploaded images)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
