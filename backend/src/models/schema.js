@@ -1,7 +1,23 @@
+const fs = require('fs');
+const path = require('path');
 const db = require('../config/db');
 
 async function createSchema() {
   await db.testConnection();
+
+  if (db.isPostgres()) {
+    console.log('[Supabase PostgreSQL] Checking/Verifying PostgreSQL tables in Supabase...');
+    const check = await db.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users'");
+    if (check.length === 0) {
+      console.log('[Supabase PostgreSQL] Initializing Supabase schema from supabase_schema.sql...');
+      const schemaSql = fs.readFileSync(path.join(__dirname, '../../../supabase_schema.sql'), 'utf8');
+      await db.exec(schemaSql);
+      console.log('[Supabase PostgreSQL] All tables created and initialized in Supabase.');
+    } else {
+      console.log('[Supabase PostgreSQL] All tables verified in Supabase.');
+    }
+    return;
+  }
 
   const tables = [
     `CREATE TABLE IF NOT EXISTS users (
